@@ -1,49 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Detail - Fruitology.store</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fruitology.store</title>
 
-<header>
-  <div class="container">
-    <div class="navbar">
-      <div class="logo">
-        <h1>Fruitology.store <span>🥭 premium mangoes</span></h1>
-      </div>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="product-detail.html">Mangoes</a></li>
-        <li><a href="checkout.html"><i class="fas fa-shopping-cart"></i> Checkout (<span id="cartCount">0</span>)</a></li>
-        <li><a href="#" id="whatsappNavBtn" class="btn-wa"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
-      </ul>
-    </div>
-  </div>
-</header>
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, sans-serif;
+}
 
-<main>
-  <div class="container product-detail-container" id="productDetail">
-    <!-- Dynamic product content will be loaded here -->
-    <div class="loading-spinner">
-      <i class="fas fa-spinner fa-pulse fa-3x"></i>
-      <p>Loading product details...</p>
-    </div>
-  </div>
-</main>
+body{
+  background:#0f172a;
+  color:white;
+}
 
-<footer>
-  <p>© 2026 Fruitology.store — Authentic taste of Bangladeshi mangoes.</p>
-</footer>
+header{
+  background:linear-gradient(135deg,#14532d,#f59e0b);
+  padding:80px 20px;
+  text-align:center;
+}
 
-<div id="toastMsg" class="toast-msg">✅ Added to cart!</div>
+header h1{
+  font-size:4rem;
+  font-weight:900;
+  margin-bottom:20px;
+}
 
-<script src="script.js"></script>
-</body>
+header p{
+  max-width:800px;
+  margin:auto;
+  font-size:1.2rem;
+}
+
+.container{
+  width:90%;
+  max-width:1200px;
+  margin:auto;
+}
+
+.section-title{
+  text-align:center;
+  margin-bottom:50px;
+}
+
+.section-title h2{
+  font-size:3rem;
+  color:#fbbf24;
+}
+
+.products{
+  padding:80px 0;
+}
+
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:30px;
 </html>
