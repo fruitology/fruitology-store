@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fruitology — Pure Nak Fazli Mango from Bangladesh</title>
+  <meta name="description" content="Order fresh, tree-ripened Nak Fazli mangoes. No chemicals, no carbide. Direct from the orchard to your door."/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥭</text></svg>"/>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Fruit<span>ology</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="products.html">Products</a></li>
+    <li><a href="checkout.html" class="nav-cta">Order Now</a></li>
+  </ul>
+  <a href="checkout.html" class="btn btn-amber" style="padding:10px 22px;font-size:13px;display:none;" id="mobile-order">Order Now</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">🌿 <span>100% Natural</span> · No Carbide · No Chemicals</div>
+    <h1>The Finest<br/><em>Nak Fazli</em><br/>Mango</h1>
+    <p class="hero-desc">
+      Hand-picked at peak ripeness from family orchards in Bangladesh.
+      Pure, natural sweetness — from our tree to your table.
+    </p>
+    <div class="hero-actions">
+      <a href="products.html" class="btn btn-primary">Shop Mangoes</a>
+      <a href="#why" class="btn btn-outline">Our Promise</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Tree-ripened</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Chemicals Used</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">48hr</div>
+        <div class="stat-label">Delivery</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-img-wrap">🥭</div>
+    <div class="float-card top-left">
+      <div class="float-label">Starting from</div>
+      <div class="float-value">৳650 / dozen</div>
+    </div>
+    <div class="float-card bottom-right">
+      <div class="float-label">Best value</div>
+      <div class="float-value">20kg — ৳2,500</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS PREVIEW -->
+<section class="section" style="background:var(--white);">
+  <div class="section-head">
+    <div class="section-tag">Our Products</div>
+    <h2 class="section-title">Choose Your Package</h2>
+    <p class="section-sub">Three carefully sized options for every need — family, bulk, or gifting.</p>
+  </div>
+  <div class="products-grid">
+
+    <div class="product-card" onclick="window.location='products.html'">
+      <div class="product-img" style="background:#2d6a4f;">
+        🥭
+        <div class="product-badge">Popular</div>
+      </div>
+      <div class="product-body">
+        <div class="product-name">Nak Fazli Mango</div>
+        <div class="product-desc">Standard 10kg box — freshly picked, naturally ripened. Perfect for a family of 4–6.</div>
+        <div class="product-footer">
+          <div class="product-price">৳1,400 <small>/ 10 kg</small></div>
+          <a href="checkout.html?pkg=nak-10kg" class="btn btn-primary" style="padding:10px 18px;font-size:13px;" onclick="event.stopPropagation()">Order</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card" onclick="window.location='products.html'">
+      <div class="product-img" style="background:#1a5c42;">
+        🥭
+        <div class="product-badge">Best Value</div>
+      </div>
+      <div class="product-body">
+        <div class="product-name">Nak Fazli Mango</div>
+        <div class="product-desc">Bulk 20kg box — best price per kg. Ideal for large families, sharing, or reselling.</div>
+        <div class="product-footer">
+          <div class="product-price">৳2,500 <small>/ 20 kg</small></div>
+          <a href="checkout.html?pkg=nak-20kg" class="btn btn-primary" style="padding:10px 18px;font-size:13px;" onclick="event.stopPropagation()">Order</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card" onclick="window.location='products.html'">
+      <div class="product-img" style="background:#e9a825;">
+        🥭
+        <div class="product-badge" style="background:var(--green-dark);color:#fff;">Gift</div>
+      </div>
+      <div class="product-body">
+        <div class="product-name">Premium Dozen</div>
+        <div class="product-desc">12 handpicked, premium-grade Nak Fazli mangoes — gift-boxed and ready to impress.</div>
+        <div class="product-footer">
+          <div class="product-price">৳650 <small>/ dozen</small></div>
+          <a href="checkout.html?pkg=nak-dozen" class="btn btn-primary" style="padding:10px 18px;font-size:13px;" onclick="event.stopPropagation()">Order</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="section" id="why">
+  <div class="section-head">
+    <div class="section-tag">Our Promise</div>
+    <h2 class="section-title">Why Fruitology?</h2>
+    <p class="section-sub">We believe you deserve to know exactly what you're eating. No shortcuts.</p>
+  </div>
+  <div class="trust-grid">
+    <div class="trust-card">
+      <div class="trust-icon">🌳</div>
+      <div class="trust-title">Tree-Ripened Only</div>
+      <div class="trust-text">Every mango ripens naturally on the tree. We never harvest early or force-ripen with chemicals.</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🚫</div>
+      <div class="trust-title">Zero Carbide</div>
+      <div class="trust-text">Absolutely no calcium carbide or ethylene gas — the harmful chemicals commonly used to artificially ripen mangoes.</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🤲</div>
+      <div class="trust-title">Hand-Picked</div>
+      <div class="trust-text">Carefully hand-selected by experienced farmers at peak sweetness. Each mango checked individually.</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">📦</div>
+      <div class="trust-title">Safe Packaging</div>
+      <div class="trust-text">Packed in ventilated boxes with natural padding to prevent bruising during courier delivery.</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🚚</div>
+      <div class="trust-title">Fast Delivery</div>
+      <div class="trust-text">Dispatched within 24 hours via Sundarban, SA Paribahan, or Pathao Courier to your nearest branch.</div>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">💬</div>
+      <div class="trust-title">WhatsApp Support</div>
+      <div class="trust-text">Direct communication with the seller via WhatsApp for order tracking and any questions.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section style="background:var(--green-dark);padding:60px 5vw;text-align:center;">
+  <div class="section-tag" style="color:var(--amber-light);">Limited Season</div>
+  <h2 style="font-family:'Playfair Display',serif;font-size:clamp(26px,3vw,42px);font-weight:700;color:var(--white);margin-bottom:14px;">
+    Nak Fazli Season is Short.<br/>Order Before It's Gone.
+  </h2>
+  <p style="color:rgba(255,255,255,0.7);font-size:16px;max-width:520px;margin:0 auto 32px;">
+    Nak Fazli is a late-season variety — once the harvest ends, it's gone until next year. Secure your order now.
+  </p>
+  <a href="products.html" class="btn btn-amber" style="font-size:16px;padding:16px 40px;">Order Your Mangoes →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">Fruit<span>ology</span></div>
+      <p class="footer-desc">Pure Nak Fazli mangoes, delivered fresh from family orchards in Bangladesh. No chemicals, no compromise.</p>
+      <p style="font-size:12px;color:rgba(255,255,255,0.4);">🌿 Tree-ripened · Zero carbide · Hand-picked</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="checkout.html">Order Now</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="#">WhatsApp: 01XXXXXXXXX</a>
+      <a href="#">bKash: 01XXXXXXXXX</a>
+      <a href="#">Nagad: 01XXXXXXXXX</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Fruitology. All rights reserved.</span>
+    <span style="font-size:12px;color:rgba(255,255,255,0.4);">Made with ❤️ in Bangladesh</span>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+  updateCartBadge();
+  // Show mobile order button on small screens
+  if (window.innerWidth <= 768) {
+    document.getElementById('mobile-order').style.display = 'flex';
+  }
+</script>
+</body>
+</html>

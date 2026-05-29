@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout — Fruitology</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥭</text></svg>"/>
+  <style>
+    .pkg-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .pkg-opt {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px; border: 1.5px solid var(--cream-dark);
+      border-radius: 12px; cursor: pointer; transition: all 0.2s;
+      background: var(--cream);
+    }
+    .pkg-opt:hover { border-color: var(--green-mid); background: rgba(82,183,136,0.05); }
+    .pkg-opt.selected { border-color: var(--green-mid); background: rgba(82,183,136,0.08); }
+    .pkg-opt-left { display: flex; align-items: center; gap: 12px; }
+    .radio-dot {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid var(--green-mid);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .pkg-opt.selected .radio-dot::after {
+      content: ''; width: 10px; height: 10px;
+      background: var(--green-mid); border-radius: 50%;
+    }
+    .pkg-name { font-weight: 500; font-size: 14px; color: var(--green-dark); }
+    .pkg-sub { font-size: 12px; color: var(--text-light); }
+    .pkg-price { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--green-mid); }
+    .step-indicator {
+      display: flex; gap: 0; margin-bottom: 28px;
+    }
+    .step {
+      flex: 1; text-align: center; font-size: 12px; font-weight: 500;
+      padding: 8px 4px; border-bottom: 2px solid var(--cream-dark);
+      color: var(--text-light);
+    }
+    .step.active { color: var(--green-mid); border-color: var(--green-mid); }
+    .step.done { color: var(--green-dark); border-color: var(--green-dark); }
+    .pay-panel { display: none; }
+    .pay-panel.show { display: block; }
+    .notice-box {
+      background: #fff8e1; border: 1px solid #f0c040;
+      border-radius: 10px; padding: 14px 16px;
+      font-size: 13px; color: #7a5700; line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .wa-btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: #25D366; color: #fff;
+      border: none; border-radius: 40px;
+      padding: 14px 28px; font-size: 15px; font-weight: 500;
+      cursor: pointer; width: 100%; margin-top: 12px;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s;
+    }
+    .wa-btn:hover { background: #1da851; }
+    .wa-icon { font-size: 20px; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Fruit<span>ology</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="products.html">Products</a></li>
+    <li><a href="checkout.html" class="active">Checkout</a></li>
+  </ul>
+</nav>
+
+<!-- CHECKOUT -->
+<div class="checkout-wrap">
+
+  <!-- LEFT: FORM -->
+  <div class="checkout-form-card">
+
+    <div class="step-indicator">
+      <div class="step active" id="step1-tab">① Package</div>
+      <div class="step" id="step2-tab">② Your Info</div>
+      <div class="step" id="step3-tab">③ Payment</div>
+    </div>
+
+    <h2 class="checkout-title" id="form-title">Place Your Order</h2>
+
+    <!-- STEP 1: PACKAGE -->
+    <div id="step1">
+      <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Select your mango package</p>
+      <div class="pkg-selector">
+        <div class="pkg-opt" id="opt-nak-10kg" onclick="selectPackage('nak-10kg')">
+          <div class="pkg-opt-left">
+            <div class="radio-dot" id="rd-nak-10kg"></div>
+            <div>
+              <div class="pkg-name">Nak Fazli — 10 kg Box</div>
+              <div class="pkg-sub">Standard family box · Most popular</div>
+            </div>
+          </div>
+          <div class="pkg-price">৳1,400</div>
+        </div>
+        <div class="pkg-opt" id="opt-nak-20kg" onclick="selectPackage('nak-20kg')">
+          <div class="pkg-opt-left">
+            <div class="radio-dot" id="rd-nak-20kg"></div>
+            <div>
+              <div class="pkg-name">Nak Fazli — 20 kg Box</div>
+              <div class="pkg-sub">Bulk family pack · Best value ৳125/kg</div>
+            </div>
+          </div>
+          <div class="pkg-price">৳2,500</div>
+        </div>
+        <div class="pkg-opt" id="opt-nak-dozen" onclick="selectPackage('nak-dozen')">
+          <div class="pkg-opt-left">
+            <div class="radio-dot" id="rd-nak-dozen"></div>
+            <div>
+              <div class="pkg-name">Premium Dozen</div>
+              <div class="pkg-sub">12 handpicked mangoes · Gift-ready</div>
+            </div>
+          </div>
+          <div class="pkg-price">৳650</div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="goStep(2)">
+        Continue → Enter Your Details
+      </button>
+    </div>
+
+    <!-- STEP 2: BUYER INFO -->
+    <div id="step2" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input type="text" class="form-input" id="inp-name" placeholder="e.g. Karim Uddin" autocomplete="name"/>
+        <div style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;" id="err-name">Please enter your full name.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mobile Number * (Bangladesh)</label>
+        <input type="tel" class="form-input" id="inp-mobile" placeholder="01XXXXXXXXX" maxlength="11" autocomplete="tel"/>
+        <div style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;" id="err-mobile">Enter a valid 11-digit Bangladeshi number.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nearest Courier Branch *</label>
+        <select class="form-select" id="inp-courier">
+          <option value="">— Select courier —</option>
+          <option>Sundarban Courier</option>
+          <option>SA Paribahan</option>
+          <option>Pathao Courier</option>
+          <option>Redex Courier</option>
+          <option>Korotoa Courier</option>
+          <option>Other Courier</option>
+        </select>
+        <div style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;" id="err-courier">Please select your nearest courier.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Full Delivery Address *</label>
+        <textarea class="form-input" id="inp-address" rows="3" placeholder="House no., road, area, thana, district…" style="resize:vertical;"></textarea>
+        <div style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;" id="err-address">Please enter your full address.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Special Instructions (optional)</label>
+        <textarea class="form-input" id="inp-note" rows="2" placeholder="Any special request or note for the seller…" style="resize:vertical;"></textarea>
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button class="btn btn-outline" onclick="goStep(1)" style="flex:0.4;">← Back</button>
+        <button class="btn btn-primary" onclick="goStep(3)" style="flex:1;">Continue → Payment</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: PAYMENT -->
+    <div id="step3" style="display:none;">
+
+      <div class="notice-box">
+        ⚠️ <strong>Important:</strong> Please send payment <strong>after</strong> confirming your order with the seller on WhatsApp. The seller will confirm availability and then ask you to send payment.
+      </div>
+
+      <p style="font-size:13px;font-weight:500;color:var(--text-mid);margin-bottom:12px;">Select payment method:</p>
+      <div class="payment-method-tab">
+        <div class="pay-tab active" id="tab-bkash" onclick="switchPayTab('bkash')">
+          <div class="pay-tab-icon">💜</div>
+          bKash
+        </div>
+        <div class="pay-tab" id="tab-nagad" onclick="switchPayTab('nagad')">
+          <div class="pay-tab-icon">🧡</div>
+          Nagad
+        </div>
+        <div class="pay-tab" id="tab-whatsapp" onclick="switchPayTab('whatsapp')">
+          <div class="pay-tab-icon">💚</div>
+          WhatsApp
+        </div>
+      </div>
+
+      <!-- bKash Panel -->
+      <div class="pay-panel show" id="panel-bkash">
+        <div class="qr-box">
+          <div style="font-size:13px;font-weight:500;color:var(--green-dark);margin-bottom:12px;">Scan bKash QR or Send to Number</div>
+          <div class="qr-code" id="qr-bkash-img">
+            <!-- QR will be generated by JS -->
+          </div>
+          <div class="qr-number" id="bkash-num">bKash: 01XXXXXXXXX</div>
+          <div class="qr-instruction">
+            Open <strong>bKash app</strong> → Send Money → Scan QR or enter number<br/>
+            Amount: <strong id="bkash-amount">৳—</strong> · Reference: <span id="bkash-ref" style="color:var(--green-mid);">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nagad Panel -->
+      <div class="pay-panel" id="panel-nagad">
+        <div class="qr-box">
+          <div style="font-size:13px;font-weight:500;color:var(--green-dark);margin-bottom:12px;">Scan Nagad QR or Send to Number</div>
+          <div class="qr-code" id="qr-nagad-img">
+            <!-- QR will be generated by JS -->
+          </div>
+          <div class="qr-number" id="nagad-num">Nagad: 01XXXXXXXXX</div>
+          <div class="qr-instruction">
+            Open <strong>Nagad app</strong> → Send Money → Scan QR or enter number<br/>
+            Amount: <strong id="nagad-amount">৳—</strong> · Reference: <span id="nagad-ref" style="color:var(--green-mid);">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- WhatsApp Panel -->
+      <div class="pay-panel" id="panel-whatsapp">
+        <div class="qr-box">
+          <div style="font-size:14px;font-weight:500;color:var(--green-dark);margin-bottom:10px;">📲 Confirm via WhatsApp</div>
+          <div class="qr-code" id="qr-wa-img">
+            <!-- WhatsApp QR generated by JS -->
+          </div>
+          <div class="qr-instruction" style="margin-top:20px;">
+            Scan to open WhatsApp with your order details pre-filled.<br/>
+            Or click the button below.
+          </div>
+          <button class="wa-btn" id="wa-btn-direct">
+            <span class="wa-icon">💬</span> Open WhatsApp & Confirm Order
+          </button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:20px;">
+        <button class="btn btn-outline" onclick="goStep(2)" style="flex:0.4;">← Back</button>
+        <button class="btn btn-primary" id="place-order-btn" onclick="placeOrder()" style="flex:1;">
+          <span class="btn-text">✅ Confirm Order</span>
+          <span class="spinner" id="order-spinner"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT: SUMMARY -->
+  <div>
+    <div class="checkout-summary-card">
+      <h2 class="checkout-title" style="font-size:18px;margin-bottom:20px;">Order Summary</h2>
+      <div id="summary-product" style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--cream-dark);">
+        <div style="width:52px;height:52px;background:var(--green-mid);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">🥭</div>
+        <div>
+          <div style="font-weight:500;font-size:15px;color:var(--green-dark);" id="sum-name">Select a package</div>
+          <div style="font-size:12px;color:var(--text-light);" id="sum-variant">—</div>
+        </div>
+      </div>
+      <div class="summary-item">
+        <span style="color:var(--text-mid);">Package</span>
+        <span id="sum-pkg2">—</span>
+      </div>
+      <div class="summary-item">
+        <span style="color:var(--text-mid);">Delivery</span>
+        <span style="color:var(--green-mid);">Free</span>
+      </div>
+      <div class="summary-total">
+        <span style="color:var(--text-mid);">Total</span>
+        <span class="summary-total-num" id="sum-total">৳—</span>
+      </div>
+
+      <div style="margin-top:24px;padding:14px 16px;background:var(--cream);border-radius:10px;">
+        <div style="font-size:12px;font-weight:500;color:var(--green-dark);margin-bottom:8px;">✅ Included</div>
+        <ul style="font-size:12px;color:var(--text-mid);padding-left:16px;line-height:2;">
+          <li>Tree-ripened Nak Fazli mangoes</li>
+          <li>Zero carbide · Zero chemicals</li>
+          <li>Ventilated packaging</li>
+          <li>Free courier delivery</li>
+          <li>WhatsApp order tracking</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:20px;border:1.5px solid var(--cream-dark);border-radius:10px;padding:14px 16px;">
+        <div style="font-size:12px;font-weight:500;color:var(--green-dark);margin-bottom:6px;">📞 Need Help?</div>
+        <div style="font-size:13px;color:var(--text-mid);">Call or WhatsApp the seller directly for any questions before ordering.</div>
+        <a href="https://wa.me/8801XXXXXXXXX" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;color:#25D366;text-decoration:none;font-weight:500;">
+          💬 Chat on WhatsApp →
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-card">
+    <div class="success-icon">🥭</div>
+    <h2 class="success-title">Order Confirmed!</h2>
+    <p class="success-text" id="success-msg">
+      Your order has been received. We'll contact you on WhatsApp to confirm and arrange payment.
+    </p>
+    <div class="success-ref" id="success-ref">Ref: —</div>
+    <button class="wa-btn" id="success-wa-btn">
+      <span class="wa-icon">💬</span> Open WhatsApp Now
+    </button>
+    <br/>
+    <a href="index.html" class="btn btn-outline" style="margin-top:12px;width:100%;">← Back to Home</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer style="margin-top:60px;">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">Fruit<span>ology</span></div>
+      <p class="footer-desc">Pure Nak Fazli. No chemicals. Delivered fresh.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Pages</h4>
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="#">WhatsApp: 01XXXXXXXXX</a>
+      <a href="#">bKash: 01XXXXXXXXX</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 Fruitology.</span>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let selectedPkg = null;
+let currentStep = 1;
+let orderRef = generateRef();
+let activePayTab = 'bkash';
+
+const PACKAGES = {
+  'nak-10kg':  { name: 'Nak Fazli Mango', variant: '10 kg Box',     price: 1400 },
+  'nak-20kg':  { name: 'Nak Fazli Mango', variant: '20 kg Box',     price: 2500 },
+  'nak-dozen': { name: 'Premium Dozen',   variant: '12 Mangoes',    price: 650  }
+};
+
+// ─── INIT FROM URL ────────────────────────────────────────────────────────────
+(function init() {
+  const params = new URLSearchParams(window.location.search);
+  const pkg = params.get('pkg');
+  if (pkg && PACKAGES[pkg]) selectPackage(pkg);
+})();
+
+// ─── PACKAGE SELECT ───────────────────────────────────────────────────────────
+function selectPackage(id) {
+  selectedPkg = id;
+  document.querySelectorAll('.pkg-opt').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.radio-dot').forEach(el => el.classList.remove('selected'));
+  const opt = document.getElementById('opt-' + id);
+  if (opt) opt.classList.add('selected');
+
+  const pkg = PACKAGES[id];
+  document.getElementById('sum-name').textContent = pkg.name;
+  document.getElementById('sum-variant').textContent = pkg.variant;
+  document.getElementById('sum-pkg2').textContent = pkg.variant;
+  document.getElementById('sum-total').textContent = '৳' + pkg.price.toLocaleString();
+}
+
+// ─── STEP NAV ─────────────────────────────────────────────────────────────────
+function goStep(n) {
+  if (n === 2 && !selectedPkg) { showToast('Please select a package first.'); return; }
+  if (n === 3 && !validateStep2()) return;
+
+  document.getElementById('step' + currentStep).style.display = 'none';
+  document.getElementById('step' + n).style.display = 'block';
+
+  ['step1-tab','step2-tab','step3-tab'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.className = 'step';
+    if (i + 1 < n) el.classList.add('done');
+    else if (i + 1 === n) el.classList.add('active');
+  });
+
+  document.getElementById('form-title').textContent =
+    n === 1 ? 'Place Your Order' :
+    n === 2 ? 'Your Details' : 'Payment';
+
+  currentStep = n;
+  if (n === 3) setupPayment();
+}
+
+// ─── VALIDATE STEP 2 ─────────────────────────────────────────────────────────
+function validateStep2() {
+  let ok = true;
+  const name    = document.getElementById('inp-name').value.trim();
+  const mobile  = document.getElementById('inp-mobile').value.trim();
+  const courier = document.getElementById('inp-courier').value;
+  const address = document.getElementById('inp-address').value.trim();
+
+  const show = (id, show) => {
+    document.getElementById(id).style.display = show ? 'block' : 'none';
+    document.getElementById(id.replace('err-','inp-')).classList.toggle('error', show);
+  };
+
+  if (name.length < 2)       { show('err-name', true); ok = false; } else show('err-name', false);
+  if (!validateBD(mobile))   { show('err-mobile', true); ok = false; } else show('err-mobile', false);
+  if (!courier)              { show('err-courier', true); ok = false; } else show('err-courier', false);
+  if (address.length < 8)    { show('err-address', true); ok = false; } else show('err-address', false);
+
+  return ok;
+}
+
+// ─── PAYMENT SETUP ────────────────────────────────────────────────────────────
+function setupPayment() {
+  const pkg    = PACKAGES[selectedPkg];
+  const mobile = document.getElementById('inp-mobile').value.trim();
+  const waUrl  = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}`;
+
+  // Update refs
+  document.getElementById('bkash-amount').textContent = '৳' + pkg.price.toLocaleString();
+  document.getElementById('nagad-amount').textContent  = '৳' + pkg.price.toLocaleString();
+  document.getElementById('bkash-ref').textContent     = orderRef;
+  document.getElementById('nagad-ref').textContent     = orderRef;
+  document.getElementById('bkash-num').textContent     = 'bKash: ' + CONFIG.BKASH_NUMBER;
+  document.getElementById('nagad-num').textContent     = 'Nagad: ' + CONFIG.NAGAD_NUMBER;
+
+  // Build WhatsApp URL
+  const order = getOrderData();
+  const waMsg = buildWhatsAppMessage(order);
+  const waFull = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${waMsg}`;
+
+  // QR codes
+  document.getElementById('qr-bkash-img').innerHTML = generateQRCodeSVG('bkash://send?to=' + CONFIG.BKASH_NUMBER + '&amount=' + pkg.price, 140);
+  document.getElementById('qr-nagad-img').innerHTML = generateQRCodeSVG('nagad://send?to=' + CONFIG.NAGAD_NUMBER + '&amount=' + pkg.price, 140);
+  document.getElementById('qr-wa-img').innerHTML = generateQRCodeSVG(waFull, 140);
+
+  // WhatsApp button
+  document.getElementById('wa-btn-direct').onclick = () => window.open(waFull, '_blank');
+  document.getElementById('success-wa-btn').onclick = () => window.open(waFull, '_blank');
+}
+
+// ─── SWITCH PAY TAB ───────────────────────────────────────────────────────────
+function switchPayTab(tab) {
+  ['bkash','nagad','whatsapp'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('panel-' + t).classList.toggle('show', t === tab);
+  });
+  activePayTab = tab;
+}
+
+// ─── BUILD ORDER DATA ─────────────────────────────────────────────────────────
+function getOrderData() {
+  const pkg = PACKAGES[selectedPkg];
+  return {
+    ref:           orderRef,
+    product:       pkg.name,
+    variant:       pkg.variant,
+    price:         pkg.price,
+    name:          document.getElementById('inp-name').value.trim(),
+    mobile:        document.getElementById('inp-mobile').value.trim(),
+    courier:       document.getElementById('inp-courier').value,
+    address:       document.getElementById('inp-address').value.trim(),
+    note:          document.getElementById('inp-note').value.trim(),
+    paymentMethod: activePayTab === 'bkash' ? 'bKash' : activePayTab === 'nagad' ? 'Nagad' : 'WhatsApp',
+    timestamp:     new Date().toLocaleString('en-BD', { timeZone: 'Asia/Dhaka' })
+  };
+}
+
+// ─── PLACE ORDER ─────────────────────────────────────────────────────────────
+async function placeOrder() {
+  const btn = document.getElementById('place-order-btn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  const order = getOrderData();
+
+  // Submit to Google Sheets
+  await submitToGoogleSheets(order);
+
+  // Clear cart
+  localStorage.removeItem('fruitology_cart');
+
+  btn.classList.remove('loading');
+  btn.disabled = false;
+
+  // Show success
+  const pkg = PACKAGES[selectedPkg];
+  document.getElementById('success-msg').innerHTML =
+    `<strong>${order.name}</strong>, your order for <strong>${pkg.name} (${pkg.variant})</strong> worth <strong>৳${pkg.price.toLocaleString()}</strong> has been placed!<br/><br/>
+    We'll contact you on <strong>${order.mobile}</strong> via WhatsApp to confirm. Please send payment after seller confirmation.`;
+  document.getElementById('success-ref').textContent = 'Order Ref: ' + orderRef;
+
+  // Rebuild WA URL for success screen
+  const waMsg = buildWhatsAppMessage(order);
+  const waFull = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${waMsg}`;
+  document.getElementById('success-wa-btn').onclick = () => window.open(waFull, '_blank');
+
+  document.getElementById('success-overlay').classList.add('show');
+}
+</script>
+</body>
+</html>
