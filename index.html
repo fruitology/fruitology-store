@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Fruitology.com | Premium Bangladeshi Mangoes</title>
+  <title>Fruitology.store | Premium Bangladeshi Mangoes</title>
   <meta name="description" content="Order fresh, organic Bangladeshi mangoes online. Nak Fazli, Langra, Harivanga & more. Fast delivery, bKash payment, nationwide courier.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -317,7 +317,7 @@
   <div class="container">
     <div class="navbar">
       <div class="logo">
-        <h1>Fruitology.com <span>🥭 premium mangoes</span></h1>
+        <h1>Fruitology.store <span>🥭 premium mangoes</span></h1>
       </div>
       <ul class="nav-links">
         <li><a href="#home">Home</a></li>
@@ -339,7 +339,7 @@
         <p class="hero-tagline">Farm-fresh, organic, and delivered to your doorstep. Taste the real essence of summer.</p>
         <div class="btn-group">
           <a href="#products" class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Buy Mangoes</a>
-          <a href="https://wa.me/8801712345678?text=I%20want%20to%20order%20mangoes" target="_blank" class="btn btn-whatsapp"><i class="fab fa-whatsapp"></i> Contact on WhatsApp</a>
+          <a href="https://wa.me/8801680849030?text=I%20want%20to%20order%20mangoes" target="_blank" class="btn btn-whatsapp"><i class="fab fa-whatsapp"></i> Contact on WhatsApp</a>
         </div>
       </div>
       <div class="hero-image">
@@ -366,7 +366,7 @@
       <h3>📋 Place Order</h3>
       <form id="orderForm" class="order-form">
         <input type="text" id="fullName" placeholder="Full Name" required>
-        <input type="tel" id="phone" placeholder="Phone Number (e.g., 017xxxxxxx)" required>
+        <input type="tel" id="phone" placeholder="Phone Number (e.g., 01xxxxxxxx)" required>
         <select id="productSelect" required>
           <option value="">Select Mango Variety</option>
           <option value="Nak Fazli Mango">Nak Fazli Mango</option>
@@ -393,9 +393,9 @@
   <div class="container" id="contact">
     <div class="section-title">📞 Get in Touch</div>
     <div class="contact-icons">
-      <a href="https://wa.me/8801712345678" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+      <a href="https://wa.me/8801680849030" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
       <a href="https://facebook.com/fruitology" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-      <a href="#"><i class="fas fa-phone-alt"></i> bKash: 017XXXXXXXX</a>
+      <a href="#"><i class="fas fa-phone-alt"></i> bKash: 8801680849030</a>
       <a href="#"><i class="fas fa-shipping-fast"></i> Courier Info: Delivery 2-4 days</a>
     </div>
     <p style="margin-bottom: 30px;">📍 Serving all over Bangladesh | Premium mango quality guaranteed.</p>
@@ -403,7 +403,7 @@
 </main>
 
 <footer>
-  <p>© 2025 Fruitology.com — Authentic taste of Bangladeshi mangoes.</p>
+  <p>© 2026 Fruitology.store — Authentic taste of Bangladeshi mangoes.</p>
   <p style="margin-top: 8px; font-size: 0.8rem;">🍃 Farm to table – naturally sweet</p>
 </footer>
 
@@ -462,7 +462,7 @@
   // We will also store locally if offline, but final product will use sheet.
   
   // IMPORTANT: Deploy your Google Apps Script with doPost(e) and set script URL below.
-  const GOOGLE_SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzR2VcJq7ExDx7F7wFVX2Z_EKRcjEx6Z6w1wGNW2QfpHhzjcpNR9pFJZ1ttjT0rS73S/exec"; 
+  const GOOGLE_SHEETS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxGkbcS2lddVCYQBhq8lUvF6w7iIu49w-KF6_NanxvlAVYW3VyHv2Vgbi5_XFoQ-kOa/exec"; 
   // ^ Replace with your own published Apps Script URL (created via mstutul.study@gmail.com account)
   // For now, we'll keep a variable that can be replaced; using demo placeholder? but user can set.
   // However order will try to send to the active URL. If no URL is valid, fail gracefully with console warning.
@@ -529,7 +529,7 @@
       address: address,
       paymentStatus: paymentStatus,
       timestamp: timestamp,
-      orderSource: "Fruitology.com"
+      orderSource: "Fruitology.store"
     };
 
     // Show loading state
@@ -562,7 +562,7 @@
   const waNav = document.getElementById('whatsappNavBtn');
   if(waNav) waNav.addEventListener('click', (e) => {
     e.preventDefault();
-    window.open("https://wa.me/8801712345678?text=Hello%20Fruitology%2C%20I%20want%20to%20buy%20fresh%20mangoes", "_blank");
+    window.open("https://wa.me/8801680849030?text=Hello%20Fruitology%2C%20I%20want%20to%20buy%20fresh%20mangoes", "_blank");
   });
 
   // ----- PRODUCT DETAIL PAGE: generate separate file (product.html) Dynamically if needed but we must provide standalone.
