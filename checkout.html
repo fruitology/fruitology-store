@@ -715,13 +715,16 @@ async function confirmOrder() {
 
   // Send to Google Sheets (fire-and-forget, won't block UI)
   try {
-    await fetch(CFG.SHEET_URL, {
-      method : 'POST',
-      mode   : 'no-cors',
-      headers: {'Content-Type':'application/json'},
-      body   : JSON.stringify(order)
+    const res = await fetch(CFG.SHEET_URL, {
+      method  : 'POST',
+      headers : { 'Content-Type': 'text/plain' },
+      body    : JSON.stringify(order)
     });
-  } catch(e) { /* silent fail — order still shown */ }
+    const result = await res.json();
+    console.log('Sheet response:', result);
+  } catch(e) {
+    console.warn('Sheet error:', e);
+  }
 
   btn.classList.remove('loading');
   btn.disabled = false;
