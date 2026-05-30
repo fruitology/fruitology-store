@@ -4,60 +4,169 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Checkout — Fruitology</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="css/style.css"/>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥭</text></svg>"/>
   <style>
-    .pkg-selector { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    /* ── CHECKOUT-SPECIFIC STYLES ── */
+    .pkg-selector { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
     .pkg-opt {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 18px; border: 1.5px solid var(--cream-dark);
-      border-radius: 12px; cursor: pointer; transition: all 0.2s;
-      background: var(--cream);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 18px; border:1.5px solid #e8dfc8;
+      border-radius:12px; cursor:pointer; transition:all 0.2s;
+      background:#fdf6e3;
     }
-    .pkg-opt:hover { border-color: var(--green-mid); background: rgba(82,183,136,0.05); }
-    .pkg-opt.selected { border-color: var(--green-mid); background: rgba(82,183,136,0.08); }
-    .pkg-opt-left { display: flex; align-items: center; gap: 12px; }
-    .radio-dot {
-      width: 18px; height: 18px; border-radius: 50%;
-      border: 2px solid var(--green-mid);
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    .pkg-opt:hover  { border-color:#52b788; background:rgba(82,183,136,0.05); }
+    .pkg-opt.active { border-color:#52b788; background:rgba(82,183,136,0.08); }
+    .pkg-opt-left   { display:flex; align-items:center; gap:12px; }
+    .radio-circle {
+      width:18px; height:18px; border-radius:50%;
+      border:2px solid #52b788; flex-shrink:0; position:relative;
     }
-    .pkg-opt.selected .radio-dot::after {
-      content: ''; width: 10px; height: 10px;
-      background: var(--green-mid); border-radius: 50%;
+    .pkg-opt.active .radio-circle::after {
+      content:''; position:absolute; inset:3px;
+      background:#52b788; border-radius:50%;
     }
-    .pkg-name { font-weight: 500; font-size: 14px; color: var(--green-dark); }
-    .pkg-sub { font-size: 12px; color: var(--text-light); }
-    .pkg-price { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--green-mid); }
-    .step-indicator {
-      display: flex; gap: 0; margin-bottom: 28px;
+    .pkg-name  { font-weight:500; font-size:14px; color:#1a3a2a; }
+    .pkg-sub   { font-size:12px; color:#888; margin-top:2px; }
+    .pkg-price { font-size:18px; font-weight:700; color:#2d6a4f; white-space:nowrap; }
+
+    /* Qty control */
+    .qty-wrap  { display:flex; align-items:center; gap:12px; }
+    .qty-btn   {
+      width:36px; height:36px; border-radius:50%;
+      border:1.5px solid #52b788; background:#fff;
+      font-size:20px; line-height:1; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      color:#1a3a2a; transition:all 0.15s;
     }
-    .step {
-      flex: 1; text-align: center; font-size: 12px; font-weight: 500;
-      padding: 8px 4px; border-bottom: 2px solid var(--cream-dark);
-      color: var(--text-light);
+    .qty-btn:hover { background:#52b788; color:#fff; }
+    .qty-num  { font-size:22px; font-weight:700; color:#1a3a2a; min-width:32px; text-align:center; }
+
+    /* Step indicator */
+    .steps { display:flex; margin-bottom:28px; }
+    .step-tab {
+      flex:1; text-align:center; font-size:12px; font-weight:500;
+      padding:8px 4px; border-bottom:2px solid #e8dfc8; color:#aaa;
     }
-    .step.active { color: var(--green-mid); border-color: var(--green-mid); }
-    .step.done { color: var(--green-dark); border-color: var(--green-dark); }
-    .pay-panel { display: none; }
-    .pay-panel.show { display: block; }
-    .notice-box {
-      background: #fff8e1; border: 1px solid #f0c040;
-      border-radius: 10px; padding: 14px 16px;
-      font-size: 13px; color: #7a5700; line-height: 1.7;
-      margin-bottom: 16px;
+    .step-tab.active { color:#52b788; border-color:#52b788; }
+    .step-tab.done   { color:#1a3a2a; border-color:#1a3a2a; }
+
+    /* Form */
+    .form-group  { margin-bottom:18px; }
+    .form-label  { display:block; font-size:13px; font-weight:500; color:#4a4a4a; margin-bottom:6px; }
+    .form-ctrl   {
+      width:100%; padding:11px 14px; border:1.5px solid #e8dfc8;
+      border-radius:10px; font-size:14px; font-family:inherit;
+      color:#1a1a1a; background:#fdf6e3; outline:none;
+      transition:border-color 0.2s, box-shadow 0.2s;
     }
-    .wa-btn {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      background: #25D366; color: #fff;
-      border: none; border-radius: 40px;
-      padding: 14px 28px; font-size: 15px; font-weight: 500;
-      cursor: pointer; width: 100%; margin-top: 12px;
-      font-family: 'DM Sans', sans-serif;
-      transition: background 0.2s;
+    .form-ctrl:focus { border-color:#52b788; box-shadow:0 0 0 3px rgba(82,183,136,0.15); background:#fff; }
+    .form-ctrl.has-error { border-color:#e74c3c !important; }
+    .field-err { font-size:12px; color:#e74c3c; margin-top:4px; display:none; }
+    .field-err.show { display:block; }
+
+    /* Payment tabs */
+    .pay-tabs  { display:flex; gap:10px; margin-bottom:14px; }
+    .pay-tab   {
+      flex:1; padding:10px 6px; border:1.5px solid #e8dfc8;
+      border-radius:10px; text-align:center; cursor:pointer;
+      font-size:13px; font-weight:500; background:#fdf6e3; transition:all 0.2s;
     }
-    .wa-btn:hover { background: #1da851; }
-    .wa-icon { font-size: 20px; }
+    .pay-tab:hover  { border-color:#52b788; }
+    .pay-tab.active { border-color:#52b788; background:rgba(82,183,136,0.08); color:#1a3a2a; }
+    .pay-tab-icon   { font-size:20px; margin-bottom:3px; }
+    .pay-panel      { display:none; }
+    .pay-panel.show { display:block; }
+
+    /* QR box */
+    .qr-box {
+      border:1.5px solid #e8dfc8; border-radius:14px;
+      padding:20px; text-align:center; background:#fdf6e3;
+    }
+    .qr-svg-wrap {
+      width:150px; height:150px; margin:0 auto 10px;
+      background:#fff; border-radius:10px; padding:8px;
+      border:1px solid #e8dfc8; display:flex; align-items:center; justify-content:center;
+    }
+    .qr-number { font-size:15px; font-weight:600; color:#1a3a2a; margin:6px 0; }
+    .qr-hint   { font-size:13px; color:#4a4a4a; line-height:1.7; }
+
+    /* Notice */
+    .notice {
+      background:#fff8e1; border:1px solid #f0c040;
+      border-radius:10px; padding:13px 15px;
+      font-size:13px; color:#7a5700; line-height:1.7; margin-bottom:16px;
+    }
+
+    /* Buttons */
+    .btn-row { display:flex; gap:12px; margin-top:20px; }
+    .btn-back {
+      flex:0 0 auto; padding:13px 20px;
+      border:1.5px solid #1a3a2a; border-radius:40px;
+      background:transparent; color:#1a3a2a; font-size:14px;
+      font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.2s;
+    }
+    .btn-back:hover { background:#1a3a2a; color:#fff; }
+    .btn-next {
+      flex:1; padding:13px 20px; background:#1a3a2a;
+      border:none; border-radius:40px; color:#fff;
+      font-size:14px; font-weight:500; cursor:pointer;
+      font-family:inherit; transition:background 0.2s;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .btn-next:hover    { background:#2d6a4f; }
+    .btn-next:disabled { background:#aaa; cursor:not-allowed; }
+    .btn-wa {
+      width:100%; padding:13px; background:#25D366; color:#fff;
+      border:none; border-radius:40px; font-size:15px; font-weight:500;
+      cursor:pointer; font-family:inherit; margin-top:12px;
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      transition:background 0.2s;
+    }
+    .btn-wa:hover { background:#1da851; }
+
+    /* Summary */
+    .sum-row   { display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid #e8dfc8; font-size:14px; }
+    .sum-total { display:flex; justify-content:space-between; padding:14px 0 0; font-weight:500; }
+    .sum-price { font-size:22px; font-weight:700; color:#2d6a4f; }
+
+    /* Success overlay */
+    .overlay {
+      display:none; position:fixed; inset:0; z-index:9999;
+      background:rgba(26,58,42,0.85);
+      align-items:center; justify-content:center;
+    }
+    .overlay.show { display:flex; }
+    .success-card {
+      background:#fff; border-radius:24px; padding:44px 36px;
+      text-align:center; max-width:420px; width:92%;
+      animation:pop 0.35s ease;
+    }
+    @keyframes pop { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+    .success-icon  { font-size:60px; margin-bottom:14px; }
+    .success-title { font-size:24px; font-weight:700; color:#1a3a2a; margin-bottom:10px; }
+    .success-body  { font-size:14px; color:#4a4a4a; line-height:1.8; margin-bottom:16px; }
+    .success-ref   { font-size:12px; color:#888; background:#fdf6e3; padding:7px 16px; border-radius:8px; display:inline-block; margin-bottom:20px; }
+
+    /* Spinner */
+    .spinner {
+      width:18px; height:18px; border:2px solid rgba(255,255,255,0.4);
+      border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; display:none;
+    }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .loading .spinner  { display:block; }
+    .loading .btn-text { display:none; }
+
+    /* Toast */
+    #toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+      background:#1a3a2a; color:#fff; padding:11px 22px;
+      border-radius:40px; font-size:14px; z-index:9999;
+      opacity:0; transition:opacity 0.3s; pointer-events:none; white-space:nowrap;
+    }
+    #toast.show { opacity:1; }
+
+    .form-select.has-error { border-color:#e74c3c !important; }
   </style>
 </head>
 <body>
@@ -72,40 +181,31 @@
   </ul>
 </nav>
 
-<!-- CHECKOUT -->
+<!-- MAIN CHECKOUT LAYOUT -->
 <div class="checkout-wrap">
 
-  <!-- LEFT: FORM -->
+  <!-- ── LEFT: FORM ── -->
   <div class="checkout-form-card">
 
-    <div class="step-indicator">
-      <div class="step active" id="step1-tab">① Package</div>
-      <div class="step" id="step2-tab">② Your Info</div>
-      <div class="step" id="step3-tab">③ Payment</div>
+    <!-- Step tabs -->
+    <div class="steps">
+      <div class="step-tab active" id="tab1">① Package</div>
+      <div class="step-tab"        id="tab2">② Your Info</div>
+      <div class="step-tab"        id="tab3">③ Payment</div>
     </div>
 
     <h2 class="checkout-title" id="form-title">Place Your Order</h2>
 
-    <!-- STEP 1: PACKAGE -->
+    <!-- ════ STEP 1: PACKAGE ════ -->
     <div id="step1">
-      <! --p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Select your mango package</ p -->
-      <p style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Select your mango package and quantity</p>
+      <p style="font-size:13px;color:#888;margin-bottom:14px;">Choose a package, then set how many boxes you need.</p>
 
-<!-- QUANTITY -->
-<div style="background:var(--cream);border-radius:12px;padding:14px 16px;margin-bottom:16px;border:1.5px solid var(--cream-dark);">
-  <label style="font-size:13px;font-weight:500;color:var(--green-dark);display:block;margin-bottom:8px;">How many boxes do you need?</label>
-  <div style="display:flex;align-items:center;gap:12px;">
-    <button type="button" onclick="changeQty(-1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid var(--green-mid);background:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--green-dark);">−</button>
-    <span id="qty-display" style="font-size:20px;font-weight:700;color:var(--green-dark);min-width:28px;text-align:center;">1</span>
-    <button type="button" onclick="changeQty(1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid var(--green-mid);background:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--green-dark);">+</button>
-    <span id="qty-kg-label" style="font-size:13px;color:var(--text-light);">boxes</span>
-  </div>
-  <div style="font-size:12px;color:var(--green-mid);margin-top:6px;">💡 Need 50kg? Select 20kg box × 2 + 10kg box × 1</div>
-</div>
+      <!-- Package options -->
       <div class="pkg-selector">
-        <div class="pkg-opt" id="opt-nak-10kg" onclick="selectPackage('nak-10kg')">
+
+        <div class="pkg-opt" id="opt-nak-10kg" onclick="selectPkg('nak-10kg')">
           <div class="pkg-opt-left">
-            <div class="radio-dot" id="rd-nak-10kg"></div>
+            <div class="radio-circle" id="rc-nak-10kg"></div>
             <div>
               <div class="pkg-name">Nak Fazli — 10 kg Box</div>
               <div class="pkg-sub">Standard family box · Most popular</div>
@@ -113,19 +213,21 @@
           </div>
           <div class="pkg-price">৳1,400</div>
         </div>
-        <div class="pkg-opt" id="opt-nak-20kg" onclick="selectPackage('nak-20kg')">
+
+        <div class="pkg-opt" id="opt-nak-20kg" onclick="selectPkg('nak-20kg')">
           <div class="pkg-opt-left">
-            <div class="radio-dot" id="rd-nak-20kg"></div>
+            <div class="radio-circle" id="rc-nak-20kg"></div>
             <div>
               <div class="pkg-name">Nak Fazli — 20 kg Box</div>
-              <div class="pkg-sub">Bulk family pack · Best value ৳125/kg</div>
+              <div class="pkg-sub">Bulk pack · Best value ৳125/kg</div>
             </div>
           </div>
           <div class="pkg-price">৳2,500</div>
         </div>
-        <div class="pkg-opt" id="opt-nak-dozen" onclick="selectPackage('nak-dozen')">
+
+        <div class="pkg-opt" id="opt-nak-dozen" onclick="selectPkg('nak-dozen')">
           <div class="pkg-opt-left">
-            <div class="radio-dot" id="rd-nak-dozen"></div>
+            <div class="radio-circle" id="rc-nak-dozen"></div>
             <div>
               <div class="pkg-name">Premium Dozen</div>
               <div class="pkg-sub">12 handpicked mangoes · Gift-ready</div>
@@ -133,27 +235,45 @@
           </div>
           <div class="pkg-price">৳650</div>
         </div>
+
       </div>
-      <button class="btn btn-primary btn-full" onclick="goStep(2)">
-        Continue → Enter Your Details
+
+      <!-- Quantity -->
+      <div style="background:#fdf6e3;border:1.5px solid #e8dfc8;border-radius:12px;padding:16px;margin-bottom:20px;">
+        <div style="font-size:13px;font-weight:500;color:#1a3a2a;margin-bottom:10px;">How many boxes?</div>
+        <div class="qty-wrap">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <span class="qty-num" id="qty-num">1</span>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+          <span id="qty-label" style="font-size:13px;color:#888;margin-left:4px;">box</span>
+        </div>
+        <div style="font-size:12px;color:#2d6a4f;margin-top:8px;" id="qty-hint">💡 Need 50kg? Try 20kg × 2 + 10kg × 1 in separate orders</div>
+      </div>
+
+      <button class="btn-next btn-full" style="width:100%;" onclick="goToStep(2)">
+        <span class="btn-text">Continue → Your Details</span>
+        <span class="spinner"></span>
       </button>
     </div>
 
-    <!-- STEP 2: BUYER INFO -->
+    <!-- ════ STEP 2: BUYER INFO ════ -->
     <div id="step2" style="display:none;">
+
       <div class="form-group">
         <label class="form-label">Full Name *</label>
-        <input type="text" class="form-input" id="inp-name" placeholder="e.g. Karim Uddin" autocomplete="name"/>
-        <div style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;" id="err-name">Please enter your full name.</div>
+        <input type="text" class="form-ctrl" id="inp-name" placeholder="e.g. Karim Uddin" autocomplete="name"/>
+        <div class="field-err" id="err-name">Please enter your full name.</div>
       </div>
+
       <div class="form-group">
         <label class="form-label">Mobile Number * (Bangladesh)</label>
-        <input type="tel" class="form-input" id="inp-mobile" placeholder="01XXXXXXXXX" maxlength="11" autocomplete="tel"/>
-        <div style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;" id="err-mobile">Enter a valid 11-digit Bangladeshi number.</div>
+        <input type="tel" class="form-ctrl" id="inp-mobile" placeholder="01XXXXXXXXX" maxlength="11" autocomplete="tel"/>
+        <div class="field-err" id="err-mobile">Enter a valid 11-digit Bangladeshi number (01XXXXXXXXX).</div>
       </div>
+
       <div class="form-group">
         <label class="form-label">Nearest Courier Branch *</label>
-        <select class="form-select" id="inp-courier">
+        <select class="form-ctrl" id="inp-courier">
           <option value="">— Select courier —</option>
           <option>Sundarban Courier</option>
           <option>SA Paribahan</option>
@@ -162,143 +282,136 @@
           <option>Korotoa Courier</option>
           <option>Other Courier</option>
         </select>
-        <div style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;" id="err-courier">Please select your nearest courier.</div>
+        <div class="field-err" id="err-courier">Please select your nearest courier.</div>
       </div>
+
       <div class="form-group">
         <label class="form-label">Full Delivery Address *</label>
-        <textarea class="form-input" id="inp-address" rows="3" placeholder="House no., road, area, thana, district…" style="resize:vertical;"></textarea>
-        <div style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;" id="err-address">Please enter your full address.</div>
+        <textarea class="form-ctrl" id="inp-address" rows="3" placeholder="House no., road, area, thana, district…" style="resize:vertical;"></textarea>
+        <div class="field-err" id="err-address">Please enter your full address (min. 10 characters).</div>
       </div>
+
       <div class="form-group">
-        <label class="form-label">Special Instructions (optional)</label>
-        <textarea class="form-input" id="inp-note" rows="2" placeholder="Any special request or note for the seller…" style="resize:vertical;"></textarea>
+        <label class="form-label">Special Instructions <span style="color:#aaa;font-weight:400;">(optional)</span></label>
+        <textarea class="form-ctrl" id="inp-note" rows="2" placeholder="Any note for the seller…" style="resize:vertical;"></textarea>
       </div>
-      <div style="display:flex;gap:12px;">
-        <button class="btn btn-outline" onclick="goStep(1)" style="flex:0.4;">← Back</button>
-        <button class="btn btn-primary" onclick="goStep(3)" style="flex:1;">Continue → Payment</button>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goToStep(1)">← Back</button>
+        <button class="btn-next" onclick="goToStep(3)">
+          <span class="btn-text">Continue → Payment</span>
+          <span class="spinner"></span>
+        </button>
       </div>
     </div>
 
-    <!-- STEP 3: PAYMENT -->
+    <!-- ════ STEP 3: PAYMENT ════ -->
     <div id="step3" style="display:none;">
 
-      <div class="notice-box">
-        ⚠️ <strong>Important:</strong> Please send payment <strong>after</strong> confirming your order with the seller on WhatsApp. The seller will confirm availability and then ask you to send payment.
+      <div class="notice">
+        ⚠️ <strong>Important:</strong> Send payment <strong>only after</strong> the seller confirms your order via WhatsApp. Do not send money before confirmation.
       </div>
 
-      <p style="font-size:13px;font-weight:500;color:var(--text-mid);margin-bottom:12px;">Select payment method:</p>
-      <div class="payment-method-tab">
-        <div class="pay-tab active" id="tab-bkash" onclick="switchPayTab('bkash')">
-          <div class="pay-tab-icon">💜</div>
-          bKash
+      <p style="font-size:13px;font-weight:500;color:#4a4a4a;margin-bottom:12px;">Select payment method:</p>
+
+      <div class="pay-tabs">
+        <div class="pay-tab active" id="tab-bkash" onclick="switchTab('bkash')">
+          <div class="pay-tab-icon">💜</div>bKash
         </div>
-        <div class="pay-tab" id="tab-nagad" onclick="switchPayTab('nagad')">
-          <div class="pay-tab-icon">🧡</div>
-          Nagad
+        <div class="pay-tab" id="tab-nagad" onclick="switchTab('nagad')">
+          <div class="pay-tab-icon">🧡</div>Nagad
         </div>
-        <div class="pay-tab" id="tab-whatsapp" onclick="switchPayTab('whatsapp')">
-          <div class="pay-tab-icon">💚</div>
-          WhatsApp
+        <div class="pay-tab" id="tab-whatsapp" onclick="switchTab('whatsapp')">
+          <div class="pay-tab-icon">💚</div>WhatsApp
         </div>
       </div>
 
-      <!-- bKash Panel -->
+      <!-- bKash -->
       <div class="pay-panel show" id="panel-bkash">
         <div class="qr-box">
-          <div style="font-size:13px;font-weight:500;color:var(--green-dark);margin-bottom:12px;">Scan bKash QR or Send to Number</div>
-          <div class="qr-code" id="qr-bkash-img">
-            <!-- QR will be generated by JS -->
-          </div>
-          <div class="qr-number" id="bkash-num">bKash: 01XXXXXXXXX</div>
-          <div class="qr-instruction">
-            Open <strong>bKash app</strong> → Send Money → Scan QR or enter number<br/>
-            Amount: <strong id="bkash-amount">৳—</strong> · Reference: <span id="bkash-ref" style="color:var(--green-mid);">—</span>
+          <div style="font-size:13px;font-weight:500;color:#1a3a2a;margin-bottom:10px;">📲 Scan or Send to bKash Number</div>
+          <div class="qr-svg-wrap" id="qr-bkash"></div>
+          <div class="qr-number" id="num-bkash">bKash: 01XXXXXXXXX</div>
+          <div class="qr-hint">
+            Open bKash → Send Money → enter number<br/>
+            Amount: <strong id="amt-bkash">৳—</strong> &nbsp;|&nbsp; Ref: <span id="ref-bkash" style="color:#2d6a4f;">—</span>
           </div>
         </div>
       </div>
 
-      <!-- Nagad Panel -->
+      <!-- Nagad -->
       <div class="pay-panel" id="panel-nagad">
         <div class="qr-box">
-          <div style="font-size:13px;font-weight:500;color:var(--green-dark);margin-bottom:12px;">Scan Nagad QR or Send to Number</div>
-          <div class="qr-code" id="qr-nagad-img">
-            <!-- QR will be generated by JS -->
-          </div>
-          <div class="qr-number" id="nagad-num">Nagad: 01XXXXXXXXX</div>
-          <div class="qr-instruction">
-            Open <strong>Nagad app</strong> → Send Money → Scan QR or enter number<br/>
-            Amount: <strong id="nagad-amount">৳—</strong> · Reference: <span id="nagad-ref" style="color:var(--green-mid);">—</span>
+          <div style="font-size:13px;font-weight:500;color:#1a3a2a;margin-bottom:10px;">📲 Scan or Send to Nagad Number</div>
+          <div class="qr-svg-wrap" id="qr-nagad"></div>
+          <div class="qr-number" id="num-nagad">Nagad: 01XXXXXXXXX</div>
+          <div class="qr-hint">
+            Open Nagad → Send Money → enter number<br/>
+            Amount: <strong id="amt-nagad">৳—</strong> &nbsp;|&nbsp; Ref: <span id="ref-nagad" style="color:#2d6a4f;">—</span>
           </div>
         </div>
       </div>
 
-      <!-- WhatsApp Panel -->
+      <!-- WhatsApp -->
       <div class="pay-panel" id="panel-whatsapp">
         <div class="qr-box">
-          <div style="font-size:14px;font-weight:500;color:var(--green-dark);margin-bottom:10px;">📲 Confirm via WhatsApp</div>
-          <div class="qr-code" id="qr-wa-img">
-            <!-- WhatsApp QR generated by JS -->
-          </div>
-          <div class="qr-instruction" style="margin-top:20px;">
-            Scan to open WhatsApp with your order details pre-filled.<br/>
-            Or click the button below.
-          </div>
-          <button class="wa-btn" id="wa-btn-direct">
-            <span class="wa-icon">💬</span> Open WhatsApp & Confirm Order
+          <div style="font-size:14px;font-weight:500;color:#1a3a2a;margin-bottom:10px;">💬 Confirm Order on WhatsApp</div>
+          <div class="qr-svg-wrap" id="qr-wa"></div>
+          <div class="qr-hint" style="margin-top:12px;">Scan QR to open WhatsApp with your order pre-filled, or tap the button below.</div>
+          <button class="btn-wa" id="btn-wa-open">
+            <span style="font-size:20px;">💬</span> Open WhatsApp & Confirm Order
           </button>
         </div>
       </div>
 
-      <div style="display:flex;gap:12px;margin-top:20px;">
-        <button class="btn btn-outline" onclick="goStep(2)" style="flex:0.4;">← Back</button>
-        <button class="btn btn-primary" id="place-order-btn" onclick="placeOrder()" style="flex:1;">
+      <div class="btn-row">
+        <button class="btn-back" onclick="goToStep(2)">← Back</button>
+        <button class="btn-next" id="btn-confirm" onclick="confirmOrder()">
           <span class="btn-text">✅ Confirm Order</span>
-          <span class="spinner" id="order-spinner"></span>
+          <span class="spinner"></span>
         </button>
       </div>
 
     </div>
   </div>
 
-  <!-- RIGHT: SUMMARY -->
+  <!-- ── RIGHT: ORDER SUMMARY ── -->
   <div>
     <div class="checkout-summary-card">
-      <h2 class="checkout-title" style="font-size:18px;margin-bottom:20px;">Order Summary</h2>
-      <div id="summary-product" style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--cream-dark);">
-        <div style="width:52px;height:52px;background:var(--green-mid);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;">🥭</div>
+      <h2 class="checkout-title" style="font-size:18px;margin-bottom:18px;">Order Summary</h2>
+
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid #e8dfc8;">
+        <div style="width:50px;height:50px;background:#2d6a4f;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;">🥭</div>
         <div>
-          <div style="font-weight:500;font-size:15px;color:var(--green-dark);" id="sum-name">Select a package</div>
-          <div style="font-size:12px;color:var(--text-light);" id="sum-variant">—</div>
+          <div style="font-weight:500;font-size:15px;color:#1a3a2a;" id="sum-name">Select a package above</div>
+          <div style="font-size:12px;color:#888;margin-top:2px;" id="sum-variant">—</div>
         </div>
       </div>
-      <div class="summary-item">
-        <span style="color:var(--text-mid);">Package</span>
-        <span id="sum-pkg2">—</span>
-      </div>
-      <div class="summary-item">
-        <span style="color:var(--text-mid);">Delivery</span>
-        <span style="color:var(--green-mid);">Free</span>
-      </div>
-      <div class="summary-total">
-        <span style="color:var(--text-mid);">Total</span>
-        <span class="summary-total-num" id="sum-total">৳—</span>
+
+      <div class="sum-row"><span style="color:#4a4a4a;">Package</span><span id="sum-pkg">—</span></div>
+      <div class="sum-row"><span style="color:#4a4a4a;">Quantity</span><span id="sum-qty">—</span></div>
+      <div class="sum-row"><span style="color:#4a4a4a;">Delivery</span><span style="color:#2d6a4f;">Free</span></div>
+      <div class="sum-total">
+        <span style="color:#4a4a4a;">Total</span>
+        <span class="sum-price" id="sum-total">৳—</span>
       </div>
 
-      <div style="margin-top:24px;padding:14px 16px;background:var(--cream);border-radius:10px;">
-        <div style="font-size:12px;font-weight:500;color:var(--green-dark);margin-bottom:8px;">✅ Included</div>
-        <ul style="font-size:12px;color:var(--text-mid);padding-left:16px;line-height:2;">
+      <div style="margin-top:22px;padding:14px;background:#fdf6e3;border-radius:10px;">
+        <div style="font-size:12px;font-weight:500;color:#1a3a2a;margin-bottom:8px;">✅ Every order includes</div>
+        <ul style="font-size:12px;color:#4a4a4a;padding-left:16px;line-height:2.1;">
           <li>Tree-ripened Nak Fazli mangoes</li>
           <li>Zero carbide · Zero chemicals</li>
-          <li>Ventilated packaging</li>
+          <li>Ventilated safe packaging</li>
           <li>Free courier delivery</li>
-          <li>WhatsApp order tracking</li>
+          <li>WhatsApp order confirmation</li>
         </ul>
       </div>
 
-      <div style="margin-top:20px;border:1.5px solid var(--cream-dark);border-radius:10px;padding:14px 16px;">
-        <div style="font-size:12px;font-weight:500;color:var(--green-dark);margin-bottom:6px;">📞 Need Help?</div>
-        <div style="font-size:13px;color:var(--text-mid);">Call or WhatsApp the seller directly for any questions before ordering.</div>
-        <a href="https://wa.me/8801XXXXXXXXX" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;color:#25D366;text-decoration:none;font-weight:500;">
+      <div style="margin-top:18px;border:1.5px solid #e8dfc8;border-radius:10px;padding:14px;">
+        <div style="font-size:12px;font-weight:500;color:#1a3a2a;margin-bottom:5px;">📞 Need help?</div>
+        <div style="font-size:13px;color:#4a4a4a;">Chat with the seller before ordering.</div>
+        <a id="wa-help-link" href="https://wa.me/8801XXXXXXXXX" target="_blank"
+           style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;color:#25D366;text-decoration:none;font-weight:500;">
           💬 Chat on WhatsApp →
         </a>
       </div>
@@ -308,21 +421,23 @@
 </div>
 
 <!-- SUCCESS OVERLAY -->
-<div class="success-overlay" id="success-overlay">
+<div class="overlay" id="overlay-success">
   <div class="success-card">
     <div class="success-icon">🥭</div>
-    <h2 class="success-title">Order Confirmed!</h2>
-    <p class="success-text" id="success-msg">
-      Your order has been received. We'll contact you on WhatsApp to confirm and arrange payment.
-    </p>
+    <h2 class="success-title">Order Placed!</h2>
+    <p class="success-body" id="success-body">Your order has been received.</p>
     <div class="success-ref" id="success-ref">Ref: —</div>
-    <button class="wa-btn" id="success-wa-btn">
-      <span class="wa-icon">💬</span> Open WhatsApp Now
+    <button class="btn-wa" id="btn-success-wa">
+      <span style="font-size:20px;">💬</span> Open WhatsApp to Confirm
     </button>
-    <br/>
-    <a href="index.html" class="btn btn-outline" style="margin-top:12px;width:100%;">← Back to Home</a>
+    <a href="index.html" style="display:block;margin-top:14px;padding:12px;border:1.5px solid #1a3a2a;border-radius:40px;color:#1a3a2a;text-decoration:none;font-size:14px;font-weight:500;text-align:center;transition:all 0.2s;">
+      ← Back to Home
+    </a>
   </div>
 </div>
+
+<!-- Toast -->
+<div id="toast"></div>
 
 <!-- FOOTER -->
 <footer style="margin-top:60px;">
@@ -343,193 +458,357 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span class="footer-copy">© 2025 Fruitology.</span>
+    <span class="footer-copy">© 2025 Fruitology. Made with ❤️ in Bangladesh</span>
   </div>
 </footer>
 
-<script src="js/main.js"></script>
 <script>
-// ─── STATE ────────────────────────────────────────────────────────────────────
-let selectedPkg = null;
-let selectedQty = 1;
-let orderRef = generateRef();
-let activePayTab = 'bkash';
-
-const PACKAGES = {
-  'nak-10kg':  { name: 'Nak Fazli Mango', variant: '10 kg Box',     price: 1400 },
-  'nak-20kg':  { name: 'Nak Fazli Mango', variant: '20 kg Box',     price: 2500 },
-  'nak-dozen': { name: 'Premium Dozen',   variant: '12 Mangoes',    price: 650  }
+// ══════════════════════════════════════════════════════════
+//  CONFIG — replace with your real numbers
+// ══════════════════════════════════════════════════════════
+const CFG = {
+  WHATSAPP : '8801XXXXXXXXX',   // 880 + number without leading 0
+  BKASH    : '01XXXXXXXXX',
+  NAGAD    : '01XXXXXXXXX',
+  SHEET_URL: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'
 };
 
-// ─── INIT FROM URL ────────────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════
+//  PACKAGES
+// ══════════════════════════════════════════════════════════
+const PKGS = {
+  'nak-10kg' : { name:'Nak Fazli Mango', variant:'10 kg Box',   price:1400 },
+  'nak-20kg' : { name:'Nak Fazli Mango', variant:'20 kg Box',   price:2500 },
+  'nak-dozen': { name:'Premium Dozen',   variant:'12 Mangoes',  price:650  }
+};
+
+// ══════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════
+let selPkg     = null;
+let selQty     = 1;
+let curStep    = 1;
+let activeTab  = 'bkash';
+let orderRef   = 'FRT-' + Date.now().toString(36).toUpperCase().slice(-6);
+
+// ══════════════════════════════════════════════════════════
+//  INIT — pick up ?pkg= from URL
+// ══════════════════════════════════════════════════════════
 (function init() {
-  const params = new URLSearchParams(window.location.search);
-  const pkg = params.get('pkg');
-  if (pkg && PACKAGES[pkg]) selectPackage(pkg);
+  const p = new URLSearchParams(window.location.search).get('pkg');
+  if (p && PKGS[p]) selectPkg(p);
 })();
 
-// ─── PACKAGE SELECT ───────────────────────────────────────────────────────────
-function selectPackage(id) {
-  selectedPkg = id;
-  document.querySelectorAll('.pkg-opt').forEach(el => el.classList.remove('selected'));
-  const opt = document.getElementById('opt-' + id);
-  if (opt) opt.classList.add('selected');
-  updateSummary();
+// ══════════════════════════════════════════════════════════
+//  PACKAGE SELECT
+// ══════════════════════════════════════════════════════════
+function selectPkg(id) {
+  selPkg = id;
+  document.querySelectorAll('.pkg-opt').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById('opt-' + id);
+  if (el) el.classList.add('active');
+  refreshQtyLabel();
+  refreshSummary();
 }
 
-function changeQty(delta) {
-  selectedQty = Math.max(1, Math.min(20, selectedQty + delta));
-  document.getElementById('qty-display').textContent = selectedQty;
-  const labels = { 'nak-10kg': selectedQty + ' × 10kg = ' + (selectedQty*10) + 'kg total',
-                   'nak-20kg': selectedQty + ' × 20kg = ' + (selectedQty*20) + 'kg total',
-                   'nak-dozen': selectedQty + ' dozen' };
-  document.getElementById('qty-kg-label').textContent = selectedPkg ? labels[selectedPkg] : 'boxes';
-  updateSummary();
+// ══════════════════════════════════════════════════════════
+//  QUANTITY
+// ══════════════════════════════════════════════════════════
+function changeQty(d) {
+  selQty = Math.max(1, Math.min(20, selQty + d));
+  document.getElementById('qty-num').textContent = selQty;
+  refreshQtyLabel();
+  refreshSummary();
 }
 
-function updateSummary() {
-  if (!selectedPkg) return;
-  const pkg = PACKAGES[selectedPkg];
-  const total = pkg.price * selectedQty;
-  const variant = selectedQty > 1 ? selectedQty + ' × ' + pkg.variant : pkg.variant;
-  document.getElementById('sum-name').textContent = pkg.name;
-  document.getElementById('sum-variant').textContent = variant;
-  document.getElementById('sum-pkg2').textContent = variant;
-  document.getElementById('sum-total').textContent = '৳' + total.toLocaleString();
+function refreshQtyLabel() {
+  const lbl = document.getElementById('qty-label');
+  lbl.textContent = selQty === 1 ? 'box' : 'boxes';
+  if (!selPkg) return;
+  const hints = {
+    'nak-10kg' : selQty + ' × 10kg = ' + (selQty*10) + 'kg total',
+    'nak-20kg' : selQty + ' × 20kg = ' + (selQty*20) + 'kg total',
+    'nak-dozen': selQty + ' dozen (' + (selQty*12) + ' mangoes)'
+  };
+  document.getElementById('qty-hint').textContent = hints[selPkg] || '';
 }
 
-// ─── STEP NAV ─────────────────────────────────────────────────────────────────
-function goStep(n) {
-  if (n === 2 && !selectedPkg) { showToast('Please select a package first.'); return; }
-  if (n === 3 && !validateStep2()) return;
+// ══════════════════════════════════════════════════════════
+//  SUMMARY UPDATE
+// ══════════════════════════════════════════════════════════
+function refreshSummary() {
+  if (!selPkg) return;
+  const pkg   = PKGS[selPkg];
+  const total = pkg.price * selQty;
+  const varTxt = selQty > 1 ? selQty + ' × ' + pkg.variant : pkg.variant;
+  document.getElementById('sum-name').textContent    = pkg.name;
+  document.getElementById('sum-variant').textContent = varTxt;
+  document.getElementById('sum-pkg').textContent     = pkg.variant;
+  document.getElementById('sum-qty').textContent     = selQty + (selQty > 1 ? ' boxes' : ' box');
+  document.getElementById('sum-total').textContent   = '৳' + total.toLocaleString();
+}
 
-  document.getElementById('step' + currentStep).style.display = 'none';
+// ══════════════════════════════════════════════════════════
+//  STEP NAVIGATION
+// ══════════════════════════════════════════════════════════
+function goToStep(n) {
+  // Guard: must select package before leaving step 1
+  if (n === 2 && !selPkg) {
+    toast('Please select a package first 👆');
+    return;
+  }
+  // Guard: validate form before going to payment
+  if (n === 3 && !validateForm()) return;
+
+  // Hide current, show next
+  document.getElementById('step' + curStep).style.display = 'none';
   document.getElementById('step' + n).style.display = 'block';
 
-  ['step1-tab','step2-tab','step3-tab'].forEach((id, i) => {
-    const el = document.getElementById(id);
-    el.className = 'step';
-    if (i + 1 < n) el.classList.add('done');
-    else if (i + 1 === n) el.classList.add('active');
-  });
+  // Update tab indicators
+  for (let i = 1; i <= 3; i++) {
+    const t = document.getElementById('tab' + i);
+    t.className = 'step-tab';
+    if (i < n)      t.classList.add('done');
+    else if (i === n) t.classList.add('active');
+  }
 
-  document.getElementById('form-title').textContent =
-    n === 1 ? 'Place Your Order' :
-    n === 2 ? 'Your Details' : 'Payment';
+  // Update title
+  const titles = {1:'Place Your Order', 2:'Your Details', 3:'Payment'};
+  document.getElementById('form-title').textContent = titles[n];
 
-  currentStep = n;
-  if (n === 3) setupPayment();
+  curStep = n;
+  if (n === 3) buildPaymentStep();
+  window.scrollTo({top: 0, behavior:'smooth'});
 }
 
-// ─── VALIDATE STEP 2 ─────────────────────────────────────────────────────────
-function validateStep2() {
+// ══════════════════════════════════════════════════════════
+//  FORM VALIDATION
+// ══════════════════════════════════════════════════════════
+function validateForm() {
   let ok = true;
+
+  function check(inputId, errId, condition) {
+    const inp = document.getElementById(inputId);
+    const err = document.getElementById(errId);
+    if (!condition) {
+      inp.classList.add('has-error');
+      err.classList.add('show');
+      ok = false;
+    } else {
+      inp.classList.remove('has-error');
+      err.classList.remove('show');
+    }
+  }
+
   const name    = document.getElementById('inp-name').value.trim();
   const mobile  = document.getElementById('inp-mobile').value.trim();
   const courier = document.getElementById('inp-courier').value;
   const address = document.getElementById('inp-address').value.trim();
 
-  const show = (id, show) => {
-    document.getElementById(id).style.display = show ? 'block' : 'none';
-    document.getElementById(id.replace('err-','inp-')).classList.toggle('error', show);
-  };
+  check('inp-name',    'err-name',    name.length >= 2);
+  check('inp-mobile',  'err-mobile',  /^01[3-9]\d{8}$/.test(mobile));
+  check('inp-courier', 'err-courier', courier !== '');
+  check('inp-address', 'err-address', address.length >= 10);
 
-  if (name.length < 2)       { show('err-name', true); ok = false; } else show('err-name', false);
-  if (!validateBD(mobile))   { show('err-mobile', true); ok = false; } else show('err-mobile', false);
-  if (!courier)              { show('err-courier', true); ok = false; } else show('err-courier', false);
-  if (address.length < 8)    { show('err-address', true); ok = false; } else show('err-address', false);
-
+  if (!ok) toast('Please fill in all required fields correctly.');
   return ok;
 }
 
-// ─── PAYMENT SETUP ────────────────────────────────────────────────────────────
-function setupPayment() {
-  const pkg    = PACKAGES[selectedPkg];
-  const mobile = document.getElementById('inp-mobile').value.trim();
-  const waUrl  = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}`;
+// ══════════════════════════════════════════════════════════
+//  PAYMENT STEP SETUP
+// ══════════════════════════════════════════════════════════
+function buildPaymentStep() {
+  const pkg   = PKGS[selPkg];
+  const total = pkg.price * selQty;
 
-  // Update refs
-  const total = pkg.price * selectedQty;
-  document.getElementById('bkash-amount').textContent = '৳' + total.toLocaleString();
-  document.getElementById('nagad-amount').textContent  = '৳' + total.toLocaleString();
-  document.getElementById('bkash-ref').textContent     = orderRef;
-  document.getElementById('nagad-ref').textContent     = orderRef;
-  document.getElementById('bkash-num').textContent     = 'bKash: ' + CONFIG.BKASH_NUMBER;
-  document.getElementById('nagad-num').textContent     = 'Nagad: ' + CONFIG.NAGAD_NUMBER;
+  // Amounts & refs
+  document.getElementById('amt-bkash').textContent = '৳' + total.toLocaleString();
+  document.getElementById('amt-nagad').textContent  = '৳' + total.toLocaleString();
+  document.getElementById('ref-bkash').textContent  = orderRef;
+  document.getElementById('ref-nagad').textContent  = orderRef;
+  document.getElementById('num-bkash').textContent  = 'bKash: ' + CFG.BKASH;
+  document.getElementById('num-nagad').textContent  = 'Nagad: '  + CFG.NAGAD;
 
-  // Build WhatsApp URL
-  const order = getOrderData();
-  const waMsg = buildWhatsAppMessage(order);
-  const waFull = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${waMsg}`;
+  // WhatsApp message
+  const order  = buildOrderObj();
+  const waText = buildWAMessage(order);
+  const waURL  = 'https://wa.me/' + CFG.WHATSAPP + '?text=' + encodeURIComponent(waText);
 
   // QR codes
-  document.getElementById('qr-bkash-img').innerHTML = generateQRCodeSVG('bkash://send?to=' + CONFIG.BKASH_NUMBER + '&amount=' + total, 140);
-  document.getElementById('qr-nagad-img').innerHTML = generateQRCodeSVG('nagad://send?to=' + CONFIG.NAGAD_NUMBER + '&amount=' + total, 140);
-  document.getElementById('qr-wa-img').innerHTML = generateQRCodeSVG(waFull, 140);
+  document.getElementById('qr-bkash').innerHTML = makeQR();
+  document.getElementById('qr-nagad').innerHTML = makeQR();
+  document.getElementById('qr-wa').innerHTML    = makeQR('#25D366');
 
-  // WhatsApp button
-  document.getElementById('wa-btn-direct').onclick = () => window.open(waFull, '_blank');
-  document.getElementById('success-wa-btn').onclick = () => window.open(waFull, '_blank');
+  // WhatsApp buttons
+  document.getElementById('btn-wa-open').onclick    = () => window.open(waURL, '_blank');
+  document.getElementById('btn-success-wa').onclick = () => window.open(waURL, '_blank');
+
+  // Help link
+  document.getElementById('wa-help-link').href = 'https://wa.me/' + CFG.WHATSAPP;
 }
 
-// ─── SWITCH PAY TAB ───────────────────────────────────────────────────────────
-function switchPayTab(tab) {
-  ['bkash','nagad','whatsapp'].forEach(t => {
-    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
-    document.getElementById('panel-' + t).classList.toggle('show', t === tab);
-  });
-  activePayTab = tab;
-}
-
-// ─── BUILD ORDER DATA ─────────────────────────────────────────────────────────
-function getOrderData() {
-  const pkg = PACKAGES[selectedPkg];
+// ══════════════════════════════════════════════════════════
+//  BUILD ORDER OBJECT
+// ══════════════════════════════════════════════════════════
+function buildOrderObj() {
+  const pkg = PKGS[selPkg];
   return {
-    ref:           orderRef,
-    product:       pkg.name,
-    variant:       selectedQty + ' × ' + pkg.variant,
-    price:         pkg.price * selectedQty,
-    quantity:      selectedQty,
-    name:          document.getElementById('inp-name').value.trim(),
-    mobile:        document.getElementById('inp-mobile').value.trim(),
-    courier:       document.getElementById('inp-courier').value,
-    address:       document.getElementById('inp-address').value.trim(),
-    note:          document.getElementById('inp-note').value.trim(),
-    paymentMethod: activePayTab === 'bkash' ? 'bKash' : activePayTab === 'nagad' ? 'Nagad' : 'WhatsApp',
-    timestamp:     new Date().toLocaleString('en-BD', { timeZone: 'Asia/Dhaka' })
+    ref           : orderRef,
+    product       : pkg.name,
+    variant       : pkg.variant,
+    quantity      : selQty,
+    price         : pkg.price * selQty,
+    name          : document.getElementById('inp-name').value.trim(),
+    mobile        : document.getElementById('inp-mobile').value.trim(),
+    courier       : document.getElementById('inp-courier').value,
+    address       : document.getElementById('inp-address').value.trim(),
+    note          : document.getElementById('inp-note').value.trim(),
+    paymentMethod : activeTab === 'bkash' ? 'bKash' : activeTab === 'nagad' ? 'Nagad' : 'WhatsApp',
+    timestamp     : new Date().toLocaleString('en-BD', {timeZone:'Asia/Dhaka'})
   };
 }
 
-// ─── PLACE ORDER ─────────────────────────────────────────────────────────────
-async function placeOrder() {
-  const btn = document.getElementById('place-order-btn');
+// ══════════════════════════════════════════════════════════
+//  WHATSAPP MESSAGE
+// ══════════════════════════════════════════════════════════
+function buildWAMessage(o) {
+  return [
+    '🥭 *New Order — Fruitology*',
+    '━━━━━━━━━━━━━━━━',
+    '📦 Product: ' + o.product + ' (' + o.variant + ')',
+    '🔢 Quantity: ' + o.quantity + (o.quantity > 1 ? ' boxes' : ' box'),
+    '💰 Total: ৳' + o.price.toLocaleString(),
+    '━━━━━━━━━━━━━━━━',
+    '👤 Name: '    + o.name,
+    '📱 Mobile: '  + o.mobile,
+    '🚚 Courier: ' + o.courier,
+    '📍 Address: ' + o.address,
+    o.note ? '📝 Note: ' + o.note : '',
+    '━━━━━━━━━━━━━━━━',
+    '💳 Payment: ' + o.paymentMethod,
+    '🔖 Ref: '     + o.ref,
+    '_Please confirm this order. Thank you!_'
+  ].filter(Boolean).join('\n');
+}
+
+// ══════════════════════════════════════════════════════════
+//  SWITCH PAYMENT TAB
+// ══════════════════════════════════════════════════════════
+function switchTab(tab) {
+  activeTab = tab;
+  ['bkash','nagad','whatsapp'].forEach(t => {
+    document.getElementById('tab-'   + t).classList.toggle('active', t === tab);
+    document.getElementById('panel-' + t).classList.toggle('show',   t === tab);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+//  CONFIRM ORDER
+// ══════════════════════════════════════════════════════════
+async function confirmOrder() {
+  const btn = document.getElementById('btn-confirm');
   btn.classList.add('loading');
   btn.disabled = true;
 
-  const order = getOrderData();
+  const order = buildOrderObj();
 
-  // Submit to Google Sheets
-  await submitToGoogleSheets(order);
-
-  // Clear cart
-  localStorage.removeItem('fruitology_cart');
+  // Send to Google Sheets (fire-and-forget, won't block UI)
+  try {
+    await fetch(CFG.SHEET_URL, {
+      method : 'POST',
+      mode   : 'no-cors',
+      headers: {'Content-Type':'application/json'},
+      body   : JSON.stringify(order)
+    });
+  } catch(e) { /* silent fail — order still shown */ }
 
   btn.classList.remove('loading');
   btn.disabled = false;
 
-  // Show success
-  const pkg = PACKAGES[selectedPkg];
-  document.getElementById('success-msg').innerHTML =
-    `<strong>${order.name}</strong>, your order for <strong>${pkg.name} (${pkg.variant})</strong> worth <strong>৳${pkg.price.toLocaleString()}</strong> has been placed!<br/><br/>
-    We'll contact you on <strong>${order.mobile}</strong> via WhatsApp to confirm. Please send payment after seller confirmation.`;
+  // Populate success screen
+  const pkg = PKGS[selPkg];
+  document.getElementById('success-body').innerHTML =
+    '<strong>' + order.name + '</strong>, your order for <strong>' +
+    order.quantity + ' × ' + pkg.variant + '</strong> totalling ' +
+    '<strong>৳' + order.price.toLocaleString() + '</strong> is placed!<br/><br/>' +
+    'We will call/WhatsApp <strong>' + order.mobile + '</strong> to confirm. ' +
+    'Pay only after seller confirmation.';
   document.getElementById('success-ref').textContent = 'Order Ref: ' + orderRef;
 
-  // Rebuild WA URL for success screen
-  const waMsg = buildWhatsAppMessage(order);
-  const waFull = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${waMsg}`;
-  document.getElementById('success-wa-btn').onclick = () => window.open(waFull, '_blank');
+  document.getElementById('overlay-success').classList.add('show');
+}
 
-  document.getElementById('success-overlay').classList.add('show');
+// ══════════════════════════════════════════════════════════
+//  QR CODE (visual placeholder — replace with real QR lib)
+// ══════════════════════════════════════════════════════════
+function makeQR(accent) {
+  accent = accent || '#1a3a2a';
+  const s = 130;
+  return `<svg width="${s}" height="${s}" viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${s}" height="${s}" fill="#fff"/>
+    <rect x="8"  y="8"  width="34" height="34" fill="${accent}" rx="3"/>
+    <rect x="12" y="12" width="26" height="26" fill="#fff"      rx="2"/>
+    <rect x="16" y="16" width="18" height="18" fill="${accent}" rx="1"/>
+    <rect x="${s-42}" y="8"  width="34" height="34" fill="${accent}" rx="3"/>
+    <rect x="${s-38}" y="12" width="26" height="26" fill="#fff"      rx="2"/>
+    <rect x="${s-34}" y="16" width="18" height="18" fill="${accent}" rx="1"/>
+    <rect x="8"  y="${s-42}" width="34" height="34" fill="${accent}" rx="3"/>
+    <rect x="12" y="${s-38}" width="26" height="26" fill="#fff"      rx="2"/>
+    <rect x="16" y="${s-34}" width="18" height="18" fill="${accent}" rx="1"/>
+    <rect x="50" y="8"  width="5" height="5" fill="${accent}"/>
+    <rect x="58" y="8"  width="5" height="5" fill="${accent}"/>
+    <rect x="66" y="8"  width="5" height="5" fill="${accent}"/>
+    <rect x="50" y="16" width="5" height="5" fill="${accent}"/>
+    <rect x="66" y="16" width="5" height="5" fill="${accent}"/>
+    <rect x="58" y="24" width="5" height="5" fill="${accent}"/>
+    <rect x="8"  y="50" width="5" height="5" fill="${accent}"/>
+    <rect x="16" y="50" width="5" height="5" fill="${accent}"/>
+    <rect x="28" y="50" width="5" height="5" fill="${accent}"/>
+    <rect x="36" y="50" width="5" height="5" fill="${accent}"/>
+    <rect x="50" y="50" width="5" height="5" fill="${accent}"/>
+    <rect x="66" y="50" width="5" height="5" fill="${accent}"/>
+    <rect x="78" y="50" width="5" height="5" fill="${accent}"/>
+    <rect x="8"  y="58" width="5" height="5" fill="${accent}"/>
+    <rect x="28" y="58" width="5" height="5" fill="${accent}"/>
+    <rect x="58" y="58" width="5" height="5" fill="${accent}"/>
+    <rect x="78" y="58" width="5" height="5" fill="${accent}"/>
+    <rect x="16" y="66" width="5" height="5" fill="${accent}"/>
+    <rect x="36" y="66" width="5" height="5" fill="${accent}"/>
+    <rect x="50" y="66" width="5" height="5" fill="${accent}"/>
+    <rect x="66" y="66" width="5" height="5" fill="${accent}"/>
+    <rect x="${s-42}" y="50" width="5" height="5" fill="${accent}"/>
+    <rect x="${s-34}" y="50" width="5" height="5" fill="${accent}"/>
+    <rect x="${s-22}" y="50" width="5" height="5" fill="${accent}"/>
+    <rect x="${s-42}" y="58" width="5" height="5" fill="${accent}"/>
+    <rect x="${s-26}" y="58" width="5" height="5" fill="${accent}"/>
+    <rect x="${s-14}" y="58" width="5" height="5" fill="${accent}"/>
+    <rect x="${s-38}" y="66" width="5" height="5" fill="${accent}"/>
+    <rect x="${s-22}" y="66" width="5" height="5" fill="${accent}"/>
+    <rect x="${s-14}" y="66" width="5" height="5" fill="${accent}"/>
+    <rect x="8"  y="${s-42}" width="5" height="5" fill="${accent}"/>
+    <rect x="24" y="${s-42}" width="5" height="5" fill="${accent}"/>
+    <rect x="36" y="${s-42}" width="5" height="5" fill="${accent}"/>
+    <rect x="50" y="${s-42}" width="5" height="5" fill="${accent}"/>
+    <rect x="66" y="${s-42}" width="5" height="5" fill="${accent}"/>
+    <rect x="16" y="${s-34}" width="5" height="5" fill="${accent}"/>
+    <rect x="36" y="${s-34}" width="5" height="5" fill="${accent}"/>
+    <rect x="58" y="${s-34}" width="5" height="5" fill="${accent}"/>
+    <rect x="8"  y="${s-26}" width="5" height="5" fill="${accent}"/>
+    <rect x="28" y="${s-26}" width="5" height="5" fill="${accent}"/>
+    <rect x="50" y="${s-26}" width="5" height="5" fill="${accent}"/>
+    <rect x="66" y="${s-26}" width="5" height="5" fill="${accent}"/>
+  </svg>`;
+}
+
+// ══════════════════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════════════════
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 3000);
 }
 </script>
 </body>
