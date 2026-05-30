@@ -1,7 +1,7 @@
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const CONFIG = {
   // REPLACE with your actual Google Apps Script Web App URL after deployment
-  GOOGLE_SHEET_URL: 'https://script.google.com/macros/s/AKfycbzTe_jLQ97jBWWtTQ-kJ6MoiyViHZFbSlE73uq5nCwIC8D4jl-2KBgx3V7l2KcCxwGM/exec',
+  GOOGLE_SHEET_URL: 'https://script.google.com/macros/s/AKfycbzQ9pbBq44HA_EJpIAmXaaJ7K4Pgd8G0m3aL0utpUEBoz9_n1T6tCw2mGsWxEIJt5OW/exec',
 
   // Your WhatsApp number (Bangladesh format: country code + number, no +)
   WHATSAPP_NUMBER: '8801680849030',
