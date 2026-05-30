@@ -351,7 +351,7 @@
 <script>
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let selectedPkg = null;
-let currentStep = 1;
+let selectedQty = 1;
 let orderRef = generateRef();
 let activePayTab = 'bkash';
 
@@ -372,15 +372,30 @@ const PACKAGES = {
 function selectPackage(id) {
   selectedPkg = id;
   document.querySelectorAll('.pkg-opt').forEach(el => el.classList.remove('selected'));
-  document.querySelectorAll('.radio-dot').forEach(el => el.classList.remove('selected'));
   const opt = document.getElementById('opt-' + id);
   if (opt) opt.classList.add('selected');
+  updateSummary();
+}
 
-  const pkg = PACKAGES[id];
+function changeQty(delta) {
+  selectedQty = Math.max(1, Math.min(20, selectedQty + delta));
+  document.getElementById('qty-display').textContent = selectedQty;
+  const labels = { 'nak-10kg': selectedQty + ' × 10kg = ' + (selectedQty*10) + 'kg total',
+                   'nak-20kg': selectedQty + ' × 20kg = ' + (selectedQty*20) + 'kg total',
+                   'nak-dozen': selectedQty + ' dozen' };
+  document.getElementById('qty-kg-label').textContent = selectedPkg ? labels[selectedPkg] : 'boxes';
+  updateSummary();
+}
+
+function updateSummary() {
+  if (!selectedPkg) return;
+  const pkg = PACKAGES[selectedPkg];
+  const total = pkg.price * selectedQty;
+  const variant = selectedQty > 1 ? selectedQty + ' × ' + pkg.variant : pkg.variant;
   document.getElementById('sum-name').textContent = pkg.name;
-  document.getElementById('sum-variant').textContent = pkg.variant;
-  document.getElementById('sum-pkg2').textContent = pkg.variant;
-  document.getElementById('sum-total').textContent = '৳' + pkg.price.toLocaleString();
+  document.getElementById('sum-variant').textContent = variant;
+  document.getElementById('sum-pkg2').textContent = variant;
+  document.getElementById('sum-total').textContent = '৳' + total.toLocaleString();
 }
 
 // ─── STEP NAV ─────────────────────────────────────────────────────────────────
@@ -434,8 +449,9 @@ function setupPayment() {
   const waUrl  = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}`;
 
   // Update refs
-  document.getElementById('bkash-amount').textContent = '৳' + pkg.price.toLocaleString();
-  document.getElementById('nagad-amount').textContent  = '৳' + pkg.price.toLocaleString();
+  const total = pkg.price * selectedQty;
+  document.getElementById('bkash-amount').textContent = '৳' + total.toLocaleString();
+  document.getElementById('nagad-amount').textContent  = '৳' + total.toLocaleString();
   document.getElementById('bkash-ref').textContent     = orderRef;
   document.getElementById('nagad-ref').textContent     = orderRef;
   document.getElementById('bkash-num').textContent     = 'bKash: ' + CONFIG.BKASH_NUMBER;
@@ -447,8 +463,8 @@ function setupPayment() {
   const waFull = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${waMsg}`;
 
   // QR codes
-  document.getElementById('qr-bkash-img').innerHTML = generateQRCodeSVG('bkash://send?to=' + CONFIG.BKASH_NUMBER + '&amount=' + pkg.price, 140);
-  document.getElementById('qr-nagad-img').innerHTML = generateQRCodeSVG('nagad://send?to=' + CONFIG.NAGAD_NUMBER + '&amount=' + pkg.price, 140);
+  document.getElementById('qr-bkash-img').innerHTML = generateQRCodeSVG('bkash://send?to=' + CONFIG.BKASH_NUMBER + '&amount=' + total, 140);
+  document.getElementById('qr-nagad-img').innerHTML = generateQRCodeSVG('nagad://send?to=' + CONFIG.NAGAD_NUMBER + '&amount=' + total, 140);
   document.getElementById('qr-wa-img').innerHTML = generateQRCodeSVG(waFull, 140);
 
   // WhatsApp button
@@ -471,8 +487,9 @@ function getOrderData() {
   return {
     ref:           orderRef,
     product:       pkg.name,
-    variant:       pkg.variant,
-    price:         pkg.price,
+    variant:       selectedQty + ' × ' + pkg.variant,
+    price:         pkg.price * selectedQty,
+    quantity:      selectedQty,
     name:          document.getElementById('inp-name').value.trim(),
     mobile:        document.getElementById('inp-mobile').value.trim(),
     courier:       document.getElementById('inp-courier').value,
