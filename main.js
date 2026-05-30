@@ -1,14 +1,14 @@
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const CONFIG = {
   // REPLACE with your actual Google Apps Script Web App URL after deployment
-  GOOGLE_SHEET_URL: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
+  GOOGLE_SHEET_URL: 'https://script.google.com/macros/s/AKfycbzTe_jLQ97jBWWtTQ-kJ6MoiyViHZFbSlE73uq5nCwIC8D4jl-2KBgx3V7l2KcCxwGM/exec',
 
   // Your WhatsApp number (Bangladesh format: country code + number, no +)
-  WHATSAPP_NUMBER: '8801XXXXXXXXX',
+  WHATSAPP_NUMBER: '8801680849030',
 
   // bKash / Nagad merchant number
-  BKASH_NUMBER: '01XXXXXXXXX',
-  NAGAD_NUMBER: '01XXXXXXXXX',
+  BKASH_NUMBER: '01680849030',
+  NAGAD_NUMBER: '01680849030',
 
   PRODUCTS: [
     {
