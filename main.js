@@ -33,7 +33,7 @@ const CONFIG = {
       id: 'nak-dozen',
       name: 'Nak Fazli Mango',
       variant: 'Premium Dozen',
-      price: 650,
+      price: 820,
       emoji: '🥭',
       desc: 'Handpicked premium dozen — gift-ready, perfectly sized golden mangoes.',
       badge: 'Gift Ready'
